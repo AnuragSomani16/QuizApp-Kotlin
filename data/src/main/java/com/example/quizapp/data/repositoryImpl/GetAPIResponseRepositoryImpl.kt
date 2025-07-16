@@ -1,5 +1,6 @@
 package com.example.quizapp.data.repositoryImpl
 
+import android.util.Log
 import com.example.quizapp.data.networking.RetrofitClient
 import com.example.quizapp.domain.repository.GetAPIResponseRepository
 import com.example.quizapp.domain.Question
@@ -7,7 +8,13 @@ import com.example.quizapp.domain.Question
 class GetAPIResponseRepositoryImpl(
     private val retrofitClient: RetrofitClient
 ): GetAPIResponseRepository {
-    override suspend fun getQuestions(): List<Question> {
-        return retrofitClient.getQuizQuestionsApiService().getQuestions()
+    override suspend fun getQuestions(urlEndPoint: String): List<Question> {
+        try {
+            return retrofitClient.getQuizQuestionsApiService(urlEndPoint).getQuestions()
+        }
+        catch (e : Exception){
+            Log.e("GetAPIResponseRepositoryImpl", "Error while getting getQuestions: ${e.message}")
+            return emptyList()
+        }
     }
 }

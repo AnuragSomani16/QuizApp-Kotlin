@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">QuizApp</string>
+    <string name="question_progress_text">Question %d of %d</string>
+    <string name="result_text">You got %d out of %d correct!</string>
+    <string name="skip_button">Skip</string>
+    <string name="question_1_of_10">Question 1 of 10</string>
+    <string name="quiz_title">Quiz</string>
+    <string name="restart_quiz">Restart Quiz</string>
+    <string name="sad_emoji">SedEmoji</string>
+    <string name="result_title">🎯 RESULT</string>
+    <string name="better_luck_next_time">Better luck next time!</string>
+    <string name="result_sample_text">You got X out of Y correct!</string>
+    <string name="default_value">0</string>
+    <string name="current_streak">Current Streak</string>
+    <string name="highest_streak">Highest Streak</string>
+    <string name="skipped">Skipped</string>
+    <string name="score">Score</string>
+    <string name="result">RESULT</string>
+    <string name="option_text">Option</string>
+    <string name="icon_view_text">icon_view_text</string>
+    <string name="congratulations_text">Congratulations!</string>
+    <string name="quiz_completion_text">You have successfully completed the Quiz.</string>
 </resources>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/quizQuestionLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- Quiz Title -->
+    <TextView
+        android:id="@+id/quizTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/quiz_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center_horizontal"
+        android:textStyle="bold"
+        android:textColor="?attr/android:textColorPrimary"
+        android:textSize="@dimen/_30sp"
+        android:fontFamily="sans-serif-condensed"
+        android:textAllCaps="true"
+        android:layout_marginTop="@dimen/_25dp"
+        android:letterSpacing="0.25"/>
+
+    <LinearLayout
+        android:id="@+id/streakLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:alpha="1"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/quizTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/questionProgressText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/question_1_of_10"
+        android:textSize="20sp"
+        app:layout_constraintTop_toBottomOf="@id/quizTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="?attr/android:textColorPrimary"
+        android:layout_marginTop="@dimen/_30dp" />
+
+    <!-- Top Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressTop"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="8dp"
+        android:progress="0"
+        android:max="100"
+        android:progressDrawable="@drawable/progress_bar"
+        app:layout_constraintTop_toBottomOf="@id/questionProgressText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        app:layout_constraintWidth_percent="1"/>
+
+    <LinearLayout
+        android:id="@+id/questionLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/progressTop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/_25dp">
+
+        <!-- Question Text -->
+        <TextView
+            android:id="@+id/question_text"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/question_height"
+            android:textSize="18sp"
+            android:layout_marginTop="10dp"
+            android:textColor="?attr/android:textColorPrimary"
+            app:layout_constraintTop_toBottomOf="@id/progressTop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Options -->
+        <LinearLayout
+            android:id="@+id/options_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/question_text"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="16dp" />
+    </LinearLayout>
+
+    <!-- Navigation Buttons -->
+    <Button
+        android:id="@+id/buttonSkip"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="end"
+        android:layout_marginBottom="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/background_button_circle"
+        android:text="@string/skip_button"
+        android:textColor="?attr/android:textColorPrimary" />
+
+    <!-- Centered Answer Delay Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressBarNextQuestion"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:max="100"
+        android:visibility="invisible"
+        android:progressDrawable="@drawable/progress_bar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="@dimen/_10dp"
+        app:layout_constraintWidth_percent="0.9" />
+</androidx.constraintlayout.widget.ConstraintLayout>

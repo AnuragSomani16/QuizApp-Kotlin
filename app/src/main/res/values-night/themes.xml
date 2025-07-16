@@ -1,0 +1,20 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Theme.QuizApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <!-- Core -->
+        <item name="colorPrimary">@color/blue_700</item>
+        <item name="colorPrimaryVariant">@color/blue_800</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Dark background & light text -->
+        <item name="android:windowBackground">@color/black</item>
+        <item name="android:textColorPrimary">@color/white</item>
+
+        <!-- Custom -->
+        <item name="colorAccent">@color/cyan_500</item>
+        <item name="colorError">@color/red_700</item>
+        <item name="colorCorrect">@color/green_700</item>
+        <item name="quizOptionBackground">@color/dark_gray</item>
+
+    </style>
+</resources>

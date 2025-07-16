@@ -5,6 +5,8 @@ import com.example.quizapp.data.di.repositoryModule
 import com.example.quizapp.domain.di.interactionModule
 
 object KoinModules {
-    val dataModules = listOf(networkingModule, repositoryModule)
-    val domainModules = listOf(interactionModule)
+    val networkingModules = networkingModule
+    val repositoryModules = repositoryModule
+    val dataModules = listOf(networkingModules, repositoryModules)
+    val domainModules = interactionModule
 }

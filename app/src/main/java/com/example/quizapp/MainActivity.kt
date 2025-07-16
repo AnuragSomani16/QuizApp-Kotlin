@@ -1,62 +1,73 @@
 package com.example.quizapp
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.FragmentActivity
-import com.example.quizapp.ui.theme.QuizAppTheme
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import androidx.lifecycle.lifecycleScope
+import com.example.quizapp.viewModels.MainViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : FragmentActivity() {
+
+    private val mainViewModel: MainViewModel by viewModel()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        // Show loader initially
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, LoaderFragment())
+            .commit()
 
-        if (savedInstanceState == null) {
-            // Show loader on start
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, LoaderFragment())
-                .commit()
+        mainViewModel.fetchQuestions()
 
-            // Simulate API call (replace with your actual API request)
-            fetchDataFromApi()
+        mainViewModel.isLoading.observe(this) {
+            if (!it) showQuizScreen()
         }
 
+        mainViewModel.triggerToast.observe(this) { boolean ->
+            if(boolean) {
+                Toast.makeText(
+                    this,
+                    "Oops! No questions found, closing the app",
+                    Toast.LENGTH_SHORT
+                ).show()
+                lifecycleScope.launch {
+                    delay(5000)
+                    finishAffinity()
+                }
+            }
+
+        }
+
+        mainViewModel.isQuizCompleted.observe(this) { completed ->
+            if (completed) {
+                showResultScreen()
+            }
+        }
     }
-    private fun fetchDataFromApi() {
-        // For example, using a coroutine (or any async mechanism)
-        GlobalScope.launch(Dispatchers.Main) {
-            // Now API response is available. Swap to QuizQuestionFragment:
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, QuizQuestionFragment())
-                .commit()
-        }
+
+    private fun showQuizScreen() {
+        supportFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                R.anim.slide_in_right, // enter
+                R.anim.slide_out_left  // exit
+            )
+            .replace(R.id.fragment_container, QuestionsFragment())
+            .commit()
+    }
+
+    private fun showResultScreen() {
+        supportFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                R.anim.slide_in_right,
+                R.anim.slide_out_left
+            )
+            .replace(R.id.fragment_container, ResultFragment())
+            .commit()
     }
 }
-//
-//@Composable
-//fun Greeting(name: String, modifier: Modifier = Modifier) {
-//    Text(
-//        text = "Hello $name!",
-//        modifier = modifier
-//    )
-//}
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview() {
-//    QuizAppTheme {
-//        Greeting("Android")
-//    }
-//}

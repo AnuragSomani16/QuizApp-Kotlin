@@ -6,18 +6,19 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-class RetrofitClient(){
+class RetrofitClient(
+    private val httpLoggingInterceptor: HttpLoggingInterceptor
+) {
+
     private fun getOkHttpClient() =
         OkHttpClient.Builder()
-            .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
             .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS).apply {
+                addInterceptor(httpLoggingInterceptor)
+            }
 
-    fun getQuizQuestionsApiService(): QuizQuestionsApiService =
-        Retrofit.Builder()
-            .baseUrl("https://dummy.base.url/")
+    fun getQuizQuestionsApiService(baseUrl: String): QuizQuestionsApiService = Retrofit.Builder()
+            .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .client(getOkHttpClient().build())
             .build()
