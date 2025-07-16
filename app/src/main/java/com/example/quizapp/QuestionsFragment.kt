@@ -12,83 +12,81 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.quizapp.databinding.FragmentQuestionBinding
 import com.example.quizapp.viewModels.MainViewModel
-import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import com.github.jinatonic.confetti.CommonConfetti
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
 private const val DELAY_2_SECONDS = 2000L
+private const val DELAY_FOR_CONFETTI = 300L
+private val STREAK_CONFETTI_THRESHOLDS = listOf(3, 5, 10)
 
 class QuestionsFragment : Fragment() {
 
     private lateinit var binding: FragmentQuestionBinding
-    private val mainViewModel: MainViewModel by activityViewModel()
+    private val viewModel: MainViewModel by activityViewModel()
 
     private var selectedIndex: Int? = null
     private var isAnswerSubmitted = false
     private var streakCount = 0
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentQuestionBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        mainViewModel.currentIndex.observe(viewLifecycleOwner) { index ->
+        viewModel.currentIndex.observe(viewLifecycleOwner) { index ->
             selectedIndex = null
             isAnswerSubmitted = false
-            binding.optionsGroup.animate()
-                .rotationY(90f)
-                .setDuration(150)
-                .withEndAction {
-                    binding.optionsGroup.rotationY = -90f
-                    showQuestion(index)
-                    binding.optionsGroup.animate()
-                        .rotationY(0f)
-                        .setDuration(150)
-                        .start()
-                }
-                .start()
+            animateFlipToNewQuestion(index)
         }
 
+        binding.buttonSkip.bringToFront()
         binding.buttonSkip.setOnClickListener {
             if (isAnswerSubmitted) return@setOnClickListener
             isAnswerSubmitted = true
-            mainViewModel.incrementSkippedQuestionsCount()
+            viewModel.incrementSkippedQuestionsCount()
             streakCount = 0
-            updateStreakView(streakCount)
-            mainViewModel.submitAnswer(selectedIndex ?: -1)
+            updateStreakView()
+            viewModel.submitAnswer(selectedIndex ?: -1)
         }
     }
 
-    private fun showQuestion(index: Int) {
-        val question = mainViewModel.questions.value?.get(index) ?: return
-        val totalQuestions = mainViewModel.questions.value?.size ?: 0
-        binding.progressTop.progress = ((index + 1) * 100) / totalQuestions
-        binding.questionProgressText.text = getString(R.string.question_progress_text, index + 1, totalQuestions)
-        binding.questionText.text = question.question
+    private fun animateFlipToNewQuestion(index: Int) {
+        binding.questionCard.animate().rotationY(90f).setDuration(150).withEndAction {
+            if (!isAdded) return@withEndAction // Prevent crash if Fragment is not attached
+            binding.questionCard.rotationY = -90f
+            showQuestion(index)
+            binding.questionCard.animate().rotationY(0f).setDuration(150).start()
+        }.start()
+    }
 
+    private fun showQuestion(index: Int) {
+        if (!isAdded) return  // prevent invalid context use
+        val question = viewModel.questions.value?.getOrNull(index) ?: return
+        val total = viewModel.questions.value?.size ?: 1
+
+        binding.progressTop.progress = ((index + 1) * 100) / total
+        binding.questionProgressText.text = getString(R.string.question_progress_text, index + 1, total)
+        binding.questionText.text = question.question
         binding.optionsGroup.removeAllViews()
 
-        question.options.forEachIndexed { i, optionText ->
+        question.options.forEachIndexed { i, text ->
             val optionView = layoutInflater.inflate(R.layout.item_option_block, binding.optionsGroup, false) as LinearLayout
-            val optionTextView = optionView.findViewById<TextView>(R.id.option_text)
+            val optionText = optionView.findViewById<TextView>(R.id.option_text)
             val icon = optionView.findViewById<ImageView>(R.id.icon_view)
 
-            optionTextView.text = optionText
+            optionText.text = text
             icon.visibility = View.GONE
             optionView.isClickable = true
-
-            val background = ContextCompat.getDrawable(requireContext(), R.drawable.background_option_block)?.mutate()
-            optionView.background = background
-            optionView.background.setTint(ContextCompat.getColor(requireContext(), R.color.gray))
+            optionView.background = ContextCompat.getDrawable(requireContext(), R.drawable.background_option_block)?.mutate()?.apply {
+                setTint(ContextCompat.getColor(requireContext(), R.color.gray))
+            }
 
             optionView.setOnClickListener {
                 if (!isAnswerSubmitted) {
                     selectedIndex = i
                     isAnswerSubmitted = true
-                    highlightAnswers()
+                    highlightAnswer(question.correctOptionIndex)
                 }
             }
 
@@ -96,35 +94,25 @@ class QuestionsFragment : Fragment() {
         }
     }
 
-    private fun highlightAnswers() {
-        val question = mainViewModel.questions.value?.get(mainViewModel.currentIndex.value ?: 0) ?: return
-        val correctIndex = question.correctOptionIndex
-        var answerIsCorrect = false
+    private fun highlightAnswer(correctIndex: Int) {
+        var isCorrect = false
 
         for (i in 0 until binding.optionsGroup.childCount) {
             val optionView = binding.optionsGroup.getChildAt(i) as LinearLayout
+            val text = optionView.findViewById<TextView>(R.id.option_text)
             val icon = optionView.findViewById<ImageView>(R.id.icon_view)
-            val textView = optionView.findViewById<TextView>(R.id.option_text)
 
             when {
                 i == selectedIndex && i == correctIndex -> {
-                    optionView.background.setTint(ContextCompat.getColor(requireContext(), R.color.green_700))
-                    textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-                    icon.setImageResource(R.drawable.ic_check)
-                    icon.visibility = View.VISIBLE
-                    answerIsCorrect = true
+                    styleOption(optionView, text, icon, R.color.green_700, R.drawable.ic_check)
+                    isCorrect = true
                 }
-                i == selectedIndex && i != correctIndex -> {
-                    optionView.background.setTint(ContextCompat.getColor(requireContext(), R.color.red_700))
-                    textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-                    icon.setImageResource(R.drawable.ic_close)
-                    icon.visibility = View.VISIBLE
+                i == selectedIndex -> {
+                    viewModel.incrementWrongAnswersCount()
+                    styleOption(optionView, text, icon, R.color.red_700, R.drawable.ic_close)
                 }
                 i == correctIndex -> {
-                    optionView.background.setTint(ContextCompat.getColor(requireContext(), R.color.green_700))
-                    textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-                    icon.setImageResource(R.drawable.ic_check)
-                    icon.visibility = View.VISIBLE
+                    styleOption(optionView, text, icon, R.color.green_700, R.drawable.ic_check)
                 }
                 else -> {
                     optionView.background.setTint(ContextCompat.getColor(requireContext(), R.color.gray))
@@ -135,23 +123,36 @@ class QuestionsFragment : Fragment() {
             optionView.isClickable = false
         }
 
-        streakCount = if (answerIsCorrect) streakCount + 1 else 0
-        if (streakCount > (mainViewModel.highestStreak.value ?: 0)) {
-            mainViewModel.highestStreak.value = streakCount
-        }
-        updateStreakView(streakCount)
+        updateStreak(isCorrect)
         animateAndMoveNext()
     }
 
-    private fun updateStreakView(streakCount: Int) {
+    private fun styleOption(view: LinearLayout, text: TextView, icon: ImageView, color: Int, iconRes: Int) {
+        if (!isAdded) return
+        view.background.setTint(ContextCompat.getColor(requireContext(), color))
+        text.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+        icon.setImageResource(iconRes)
+        icon.visibility = View.VISIBLE
+    }
+
+    private fun updateStreak(correct: Boolean) {
+        streakCount = if (correct) streakCount + 1 else 0
+        if (streakCount > (viewModel.highestStreak.value ?: 0)) {
+            viewModel.highestStreak.value = streakCount
+        }
+        if (viewModel.getCurrentStreak() < streakCount) viewModel.incrementCurrentStreak()
+        updateStreakView()
+    }
+
+    private fun updateStreakView() {
+        if (!isAdded) return
         val fireLayout = binding.streakLayout
         fireLayout.removeAllViews()
-        if(mainViewModel.getCurrentStreak() < streakCount) mainViewModel.incrementCurrentStreak()
+
         if (streakCount >= 3) {
             fireLayout.alpha = 0.9f
-
-            for (i in 1..streakCount) {
-                val emoji = TextView(requireContext()).apply {
+            repeat(streakCount) {
+                val fireEmoji = TextView(requireContext()).apply {
                     text = "\uD83D\uDD25"
                     textSize = 24f
                     letterSpacing = 0.2f
@@ -162,35 +163,17 @@ class QuestionsFragment : Fragment() {
                     scaleX = 0.7f
                     scaleY = 0.7f
                 }
-
-                emoji.animate()
-                    .scaleX(1.3f)
-                    .scaleY(1.3f)
-                    .setDuration(200)
-                    .withEndAction {
-                        emoji.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
-                    }
-                    .start()
-
-                fireLayout.addView(emoji)
+                fireEmoji.animate().scaleX(1.3f).scaleY(1.3f).setDuration(200).withEndAction {
+                    fireEmoji.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
+                }.start()
+                fireLayout.addView(fireEmoji)
             }
 
-            fireLayout.scaleX = 0.95f
-            fireLayout.scaleY = 0.95f
-            fireLayout.animate()
-                .scaleX(1.1f)
-                .scaleY(1.1f)
-                .setDuration(200)
-                .withEndAction {
-                    fireLayout.animate()
-                        .scaleX(1f)
-                        .scaleY(1f)
-                        .setDuration(150)
-                        .start()
-                }
-                .start()
-            val listOfStreaksForConfetti = listOf(3, 5, 7, 10)
-            if (streakCount in listOfStreaksForConfetti) {
+            fireLayout.animate().scaleX(1.1f).scaleY(1.1f).setDuration(200).withEndAction {
+                fireLayout.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
+            }.start()
+
+            if (streakCount in STREAK_CONFETTI_THRESHOLDS && isAdded) {
                 CommonConfetti.rainingConfetti(
                     binding.root as ViewGroup,
                     intArrayOf(
@@ -198,31 +181,36 @@ class QuestionsFragment : Fragment() {
                         ContextCompat.getColor(requireContext(), R.color.cyan_500),
                         ContextCompat.getColor(requireContext(), R.color.green_700)
                     )
-                ).stream(1000)
+                ).stream(DELAY_FOR_CONFETTI)
             }
         }
     }
 
     private fun animateAndMoveNext() {
+        if (!isAdded) return
         binding.progressBarNextQuestion.visibility = View.VISIBLE
         startCountdownProgress()
         binding.progressBarNextQuestion.postDelayed({
-            mainViewModel.submitAnswer(selectedIndex ?: -1)
+            if (isAdded) {
+                viewModel.submitAnswer(selectedIndex ?: -1)
+            }
         }, DELAY_2_SECONDS)
     }
 
     private fun startCountdownProgress() {
+        if (!isAdded) return
         binding.progressBarNextQuestion.apply {
             visibility = View.VISIBLE
             max = 100
             progress = 100
         }
-        val animator = ObjectAnimator.ofInt(binding.progressBarNextQuestion, "progress", 100, 0)
-        animator.duration = DELAY_2_SECONDS
-        animator.interpolator = LinearInterpolator()
-        animator.start()
-        animator.doOnEnd {
-            binding.progressBarNextQuestion.visibility = View.GONE
+        ObjectAnimator.ofInt(binding.progressBarNextQuestion, "progress", 100, 0).apply {
+            duration = DELAY_2_SECONDS
+            interpolator = LinearInterpolator()
+            doOnEnd {
+                if (isAdded) binding.progressBarNextQuestion.visibility = View.GONE
+            }
+            start()
         }
     }
 }

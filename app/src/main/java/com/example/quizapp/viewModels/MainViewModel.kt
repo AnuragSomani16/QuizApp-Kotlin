@@ -17,6 +17,7 @@ class MainViewModel(
 
     private var skippedQuestions = 0
     private var currentStreak = 0
+    private var wrongAnswers = 0
 
     private val _questions = MutableLiveData<List<Question>>()
     val questions: LiveData<List<Question>> = _questions
@@ -69,21 +70,20 @@ class MainViewModel(
         }
     }
 
-    fun goToPrevious() {
-        val prev = (_currentIndex.value ?: 0) - 1
-        if (prev >= 0) _currentIndex.value = prev
-    }
-
-    fun skipQuestion() {
-        goToNext()
-    }
-
     fun incrementSkippedQuestionsCount(){
         skippedQuestions+=1
     }
 
     fun getSkippedQuestionsCount(): Int {
         return skippedQuestions
+    }
+
+    fun incrementWrongAnswersCount(){
+        wrongAnswers+=1
+    }
+
+    fun getWrongAnswersCount(): Int {
+        return wrongAnswers
     }
 
     fun incrementCurrentStreak(){
@@ -97,6 +97,7 @@ class MainViewModel(
     fun reset() {
         skippedQuestions = 0
         currentStreak = 0
+        wrongAnswers = 0
         _questions.value = emptyList()
         _triggerToast.value = false
         _currentIndex.value = 0

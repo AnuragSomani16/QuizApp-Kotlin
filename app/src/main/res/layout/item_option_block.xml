@@ -1,7 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/option_block"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/option_height"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/option_height"
     android:orientation="horizontal"
     android:background="@drawable/background_option_block"
     android:padding="16dp"
@@ -17,13 +18,18 @@
         android:layout_weight="1"
         android:text="@string/option_text"
         android:textSize="16sp"
-        android:textColor="@color/black"/>
+        android:textColor="@color/black"
+        android:maxLines="3"
+        android:ellipsize="end"
+        android:breakStrategy="simple"
+        android:scrollHorizontally="true" />
 
     <ImageView
         android:id="@+id/icon_view"
         android:layout_width="20dp"
         android:layout_height="20dp"
+        android:layout_marginStart="8dp"
         android:contentDescription="@string/icon_view_text"
         android:visibility="gone"
-        android:layout_marginStart="8dp"/>
+        android:scaleType="centerInside"/>
 </LinearLayout>

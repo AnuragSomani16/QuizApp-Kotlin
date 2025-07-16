@@ -16,8 +16,8 @@ class MainActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         setContentView(R.layout.activity_main)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         // Show loader initially
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, LoaderFragment())
@@ -52,10 +52,13 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun showQuizScreen() {
+        val current = supportFragmentManager.findFragmentById(R.id.fragment_container)
+        if (current is QuestionsFragment) return
+
         supportFragmentManager.beginTransaction()
             .setCustomAnimations(
-                R.anim.slide_in_right, // enter
-                R.anim.slide_out_left  // exit
+                R.anim.slide_in_right,
+                R.anim.slide_out_left
             )
             .replace(R.id.fragment_container, QuestionsFragment())
             .commit()

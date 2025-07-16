@@ -12,6 +12,7 @@
     <string name="result_sample_text">You got X out of Y correct!</string>
     <string name="default_value">0</string>
     <string name="current_streak">Current Streak</string>
+    <string name="wrong_answers">Wrong Answers Marked</string>
     <string name="highest_streak">Highest Streak</string>
     <string name="skipped">Skipped</string>
     <string name="score">Score</string>
@@ -20,4 +21,5 @@
     <string name="icon_view_text">icon_view_text</string>
     <string name="congratulations_text">Congratulations!</string>
     <string name="quiz_completion_text">You have successfully completed the Quiz.</string>
+    <string name="happy_emoji">happy_emoji\n</string>
 </resources>
