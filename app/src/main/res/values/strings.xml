@@ -22,4 +22,5 @@
     <string name="congratulations_text">Congratulations!</string>
     <string name="quiz_completion_text">You have successfully completed the Quiz.</string>
     <string name="happy_emoji">happy_emoji\n</string>
+    <string name="summary_title">Summary</string>
 </resources>
