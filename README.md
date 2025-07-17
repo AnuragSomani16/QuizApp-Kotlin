@@ -80,11 +80,25 @@ This project is designed using **Clean Architecture**, split into four layers:
 - ✅ Shuffled questions and options for every quiz attempt.
 - ✅ Real-time visual feedback (green/red + icons).
 - ✅ Confetti animations for achieving streaks.
+  - ✅ Confetti with shorter duration in question screen if user gains 3, 5 or 10 consecutive streaks
+  - ✅ Confetti with longer duration in result screen if user scores more than 8
+- ✅ Questions progress text, with progress bar
+- ✅ Linear + Circular progress bar combination with wavy effect for loader screen
+- ✅ Card flip transition for next question
+- ✅ Animation for fragment/screen transition
 - ✅ Fire emoji streak animation based on count.
-- ✅ Auto-skip transition with 2-second delay and circular progress.
-- ✅ Fully scrollable and responsive UI.
+  - ✅ Also handles the dismiss/appearance of the streak based on streak off/on.
+  - ✅ Animations while adding streak on the screen
+  - ✅ Made UI constant which avoids the space to shrink if streak view dismisses
+- ✅ Auto-skip transition with 2-second delay and linear progress bar.
+- ✅ Fully scrollable and responsive UI, along with constrained fixed components like Quiz title, progress, streak view, skip button etc.
+- ✅ Added flexibility in the app's text views to show any long content(Questions, Options etc..) without truncation.
 - ✅ Underlined and styled text titles.
 - ✅ Option skipping supported anytime.
+- ✅ Proper Summary table for final results
+- ✅ Floating Emoji on Result Screen
+  - ✅ Sad Emoji if user scores atmost 5 points
+  - ✅ Happy Emoji if user scores more than 5 points
 
 ---
 
