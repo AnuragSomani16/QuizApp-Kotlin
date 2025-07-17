@@ -7,7 +7,7 @@ The app includes three main screens:
 
 - 🔄 **Loader Screen** – Simulates a network call and displays a loading animation.  
 - ❓ **Questions Screen** – Displays one question at a time, allows option selection or skipping, and shows streak animations.  
-- 🏁 **Result Screen** – Summarizes score, skipped questions, current and highest streaks.
+- 🏁 **Result Screen** – Summarizes score, skipped questions, current, wrongs answers and highest streaks.
 
 ---
 
@@ -23,7 +23,7 @@ This project is designed using **Clean Architecture**, split into four layers:
   - `ResultFragment`
 - Uses `MainViewModel` to:
   - Handle screen transitions.
-  - Preserve quiz state (score, streaks, current index, etc.) using **LiveData**.
+  - Preserve quiz state (score, streaks, current index, wrong questions marked, etc.) using **LiveData**.
 - UI Features:
   - Option selection with ripple effect.
   - Icons and tint feedback: ✅ for correct, ❌ for incorrect.
