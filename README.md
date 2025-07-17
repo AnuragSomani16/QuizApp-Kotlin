@@ -88,6 +88,12 @@ This project is designed using **Clean Architecture**, split into four layers:
 
 ---
 
+### 🗂️ Project Structure
+
+<img width="1470" height="1272" alt="image" src="https://github.com/user-attachments/assets/c2b3e14e-f992-4db4-ba8b-e9e72c36d9e8" />
+
+---
+
 ## App Snapshots
 <img width="300" alt="Loader Screen" src="https://github.com/user-attachments/assets/156511f6-750e-4b7c-8ae5-3db5d9daae5e" />  
 <img width="300" alt="Quiz Screen" src="https://github.com/user-attachments/assets/702a5a77-4203-4aa8-b27b-2412d63fc5c1" />  
