@@ -136,6 +136,8 @@ This project is designed using **Clean Architecture**, split into four layers:
   }
 ]
 
+---
+Download the APK to test it - https://drive.google.com/drive/folders/1VFVynFC9VG7B7qhmygnKFQoh9FVxpN3u?usp=sharing
 
 
 
