@@ -31,7 +31,8 @@ class ResultFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         val correctAnswersCount = mainViewModel.correctAnswers.value ?: 0
-        val total = mainViewModel.questions.value?.size ?: 10
+        val quizData = mainViewModel.questions.value ?: return
+        val total = quizData.questions.size
         val wrongAnswersCount = mainViewModel.getWrongAnswersCount()
         val skippedQuestionsCount = mainViewModel.getSkippedQuestionsCount()
         val currentStreak = mainViewModel.getCurrentStreak()

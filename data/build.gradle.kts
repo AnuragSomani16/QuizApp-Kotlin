@@ -32,6 +32,7 @@ android {
 }
 
 dependencies {
+    val room_version = "2.7.2"
     implementation(project(":domain"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -48,4 +49,6 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor")
     implementation("io.insert-koin:koin-android:4.1.0")
     implementation("io.insert-koin:koin-core:4.1.0")
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
 }

@@ -1,6 +1,8 @@
 package com.example.quizapp.domain.useCases
 
 import com.example.quizapp.domain.Question
+import com.example.quizapp.domain.model.QuestionAttempt
+import com.example.quizapp.domain.model.QuizResult
 import com.example.quizapp.domain.repository.GetAPIResponseRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -11,10 +13,10 @@ private const val END_POINT = "https://gist.githubusercontent.com/dr-samrat/5384
 class GetListOfQuestionsUseCase(
     private val getAPIResponseRepository: GetAPIResponseRepository
 ) {
-    suspend operator fun invoke(): List<Question> = withContext(Dispatchers.IO) {
+    suspend operator fun invoke(endPoint: String, category: String): QuizResult = withContext(Dispatchers.IO) {
         delay(3000) // Simulate network delay for progress bar
 
-        val originalQuestions = getAPIResponseRepository.getQuestions(END_POINT)
+        val originalQuestions = getAPIResponseRepository.getQuestions(endPoint)
 
         val shuffledQuestions = originalQuestions.map { question ->
             // Pair each option with its original index
@@ -36,6 +38,18 @@ class GetListOfQuestionsUseCase(
             )
         }.shuffled() // Finally shuffle the order of questions themselves
 
-        shuffledQuestions
+        val modifiedQuestions: List<QuestionAttempt> = shuffledQuestions.map { question ->
+            QuestionAttempt(
+                questionText = question.question,
+                options = question.options,
+                correctAnswerIndex = question.correctOptionIndex,
+                selectedAnswerIndex = -1 // or set if known
+            )
+        }
+
+        QuizResult(
+            category = category,
+            questions = modifiedQuestions
+        )
     }
 }

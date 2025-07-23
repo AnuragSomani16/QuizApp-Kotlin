@@ -23,9 +23,13 @@ class MainActivity : FragmentActivity() {
             .replace(R.id.fragment_container, LoaderFragment())
             .commit()
 
-        mainViewModel.fetchQuestions()
+        mainViewModel.fetchCategories()
 
         mainViewModel.isLoading.observe(this) {
+            if (!it) showCategoriesScreen()
+        }
+
+        mainViewModel.isQuestionsLoading.observe(this){
             if (!it) showQuizScreen()
         }
 
@@ -61,6 +65,16 @@ class MainActivity : FragmentActivity() {
                 R.anim.slide_out_left
             )
             .replace(R.id.fragment_container, QuestionsFragment())
+            .commit()
+    }
+
+    private fun showCategoriesScreen() {
+        supportFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                R.anim.slide_in_right,
+                R.anim.slide_out_left
+            )
+            .replace(R.id.fragment_container, CategoriesFragment())
             .commit()
     }
 

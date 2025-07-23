@@ -23,4 +23,11 @@ class RetrofitClient(
             .client(getOkHttpClient().build())
             .build()
             .create(QuizQuestionsApiService::class.java)
+
+    fun getQuizCategoryApiService(baseUrl: String): QuizCategoryApiService = Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(getOkHttpClient().build())
+            .build()
+            .create(QuizCategoryApiService::class.java)
 }

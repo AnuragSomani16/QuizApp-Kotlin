@@ -62,12 +62,15 @@ class QuestionsFragment : Fragment() {
 
     private fun showQuestion(index: Int) {
         if (!isAdded) return  // prevent invalid context use
-        val question = viewModel.questions.value?.getOrNull(index) ?: return
-        val total = viewModel.questions.value?.size ?: 1
+        val quizQuestion = viewModel.questions.value ?: return
+        val question = quizQuestion.questions.getOrNull(index) ?: return
+        val total = quizQuestion.questions.size
 
         binding.progressTop.progress = ((index + 1) * 100) / total
         binding.questionProgressText.text = getString(R.string.question_progress_text, index + 1, total)
-        binding.questionText.text = question.question
+        binding.questionText.text = question.questionText
+        binding.quizTitle.text = quizQuestion.category
+
         binding.optionsGroup.removeAllViews()
 
         question.options.forEachIndexed { i, text ->
@@ -86,7 +89,7 @@ class QuestionsFragment : Fragment() {
                 if (!isAnswerSubmitted) {
                     selectedIndex = i
                     isAnswerSubmitted = true
-                    highlightAnswer(question.correctOptionIndex)
+                    highlightAnswer(question.correctAnswerIndex)
                 }
             }
 
